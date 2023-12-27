@@ -1,0 +1,47 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+# For Google Colab compatibility
+from google.colab import files
+# Upload the Kaggle dataset to Google Colab
+uploaded = files.upload()
+# Assuming your dataset is a CSV file
+df = pd.read_csv('/content/Toddler Autism dataset July 2018.csv')
+
+# Display the first few rows of the dataset
+df.head()
+# Print the columns of the encoded dataframe
+print(df_encoded.columns)
+# Assuming your dataset has categorical columns, you can use pandas get_dummies for one-hot encoding
+df_encoded = pd.get_dummies(df, columns=['Case_No','A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','Age_Mons','Qchat-10-Score','Sex','Ethnicity','Jaundice','Family_mem_with_ASD','Who completed the test','Class/ASD Traits '])
+
+# Drop the target column for X and assign it for y
+# Replace 'correct_column_name' with the actual column name after one-hot encoding
+X = df_encoded.drop('Family_mem_with_ASD_yes', axis=1)
+y = df_encoded['Family_mem_with_ASD_no']
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Now, you can train your model
+model = RandomForestClassifier()
+model.fit(X_train, y_train)
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
+
+# Display confusion matrix
+conf_matrix = confusion_matrix(y_test, y_pred)
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues')
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('Confusion Matrix')
+plt.show()
